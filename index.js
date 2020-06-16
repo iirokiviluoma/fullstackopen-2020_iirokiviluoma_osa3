@@ -32,7 +32,7 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
-// Yksitätinen puhelinnumero
+// Yksittäinen puhelinnumero
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   console.log(`Request on person with id: ${id}`)
@@ -41,8 +41,17 @@ app.get('/api/persons/:id', (request, response) => {
   if (person) {
     response.json(person)
   } else {  // Mikäli henkilöä ei löytynyt
+    console.log(`Requested person not found.`)
     response.status(404).end()
   }
+})
+
+// Yksittäinen poisto
+app.delete('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  console.log(`Request on delete person with id: ${id}`)
+  persons = persons.filter(p => p.id !== id)
+  response.status(204).end()
 })
 
 // Sovelluksen yleistiedot
