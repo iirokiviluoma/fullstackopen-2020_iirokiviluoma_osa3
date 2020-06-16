@@ -46,6 +46,50 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
+// Generoi numerolle uuden id:n käyttäen Math.random-funktiota.
+const generateId = () => {
+  const max = 9999
+  let newId = 1 + Math.floor(Math.random() * max)
+  console.log(`Generated new id: ${newId}`)
+
+  // Generoidaan kunnes löytyy vapaa id.
+  while (persons.find(p => p.id === newId)) {
+    console.log(`Id already present, generating new one...`)
+    newId = Math.floor(Math.random() * max)
+    console.log(`Generated new id: ${newId}`)
+  }
+
+  return newId
+}
+
+// Yksittäinen lisäys
+app.post('/api/persons', (request, response) => {
+  console.log(`Request on adding a new person.`)
+  const reqBody = request.body
+
+  if (!reqBody.name || !reqBody.number) {
+    return response.status(400).json({
+      error: "Bad request!"
+    })
+  }
+
+  if (persons.find(p => p.name === reqBody.name)) {
+    return response.status(400).json({
+      error: "Name already in the server."
+    })
+  }
+
+  const newPerson = {
+    name: reqBody.name,
+    number: reqBody.number,
+    id: generateId()
+  }
+
+  console.log(newPerson)
+  persons = persons.concat(newPerson)
+  response.json(newPerson)
+})
+
 // Yksittäinen poisto
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
