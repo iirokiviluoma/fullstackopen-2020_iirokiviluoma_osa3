@@ -1,6 +1,3 @@
-// Käytettävä portti
-const PORT = 3001
-
 // Kovakoodatut puhelinnumerot
 let persons = [
   {
@@ -29,13 +26,22 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 
-// Palautetaan kaikki puhelinnumerot
+// Kaikki puhelinnumerot
 app.get('/api/persons', (request, response) => {
   console.log('Requested all persons.')
   response.json(persons)
 })
 
-// Sovellus tarkkailee portin 3001 liikennettä.
+// Sovelluksen yleistiedot
+app.get('/info', (request, response) => {
+  console.log('Requested info.')
+  const personCount = persons.length
+  const time = new Date()
+  response.send(`Phonebook has info of ${personCount} people.<br/><br/>${time}`)
+})
+
+const PORT = 3001 // Käytettävä portti
+// Sovellus tarkkailee valitun portin liikennettä.
 app.listen(PORT, () => {
   console.log(`Server running, port: ${PORT}`)
 })
