@@ -1,3 +1,3 @@
 # fullstackopen-2020_iirokiviluoma_osa3
-# puhelinluetto backend
+## osa3: puhelinluetto backend
 Palautusrepo Full Stack Open 2020 -kurssin osa3:lle.

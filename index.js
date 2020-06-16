@@ -32,6 +32,19 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
+// Yksitätinen puhelinnumero
+app.get('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  console.log(`Request on person with id: ${id}`)
+  const person = persons.find(p => p.id === id)
+
+  if (person) {
+    response.json(person)
+  } else {  // Mikäli henkilöä ei löytynyt
+    response.status(404).end()
+  }
+})
+
 // Sovelluksen yleistiedot
 app.get('/info', (request, response) => {
   console.log('Requested info.')
