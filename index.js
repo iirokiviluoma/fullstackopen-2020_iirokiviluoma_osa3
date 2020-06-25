@@ -124,7 +124,7 @@ app.get('/info', (request, response) => {
   response.send(`Phonebook has info of ${personCount} people.<br/><br/>${time}`)
 })
 
-const PORT = 3001 // Käytettävä portti
+const PORT = process.env.PORT || 3001 // Käytettävä portti
 // Sovellus tarkkailee valitun portin liikennettä.
 app.listen(PORT, () => {
   console.log(`Server running, port: ${PORT}`)
