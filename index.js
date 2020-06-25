@@ -128,5 +128,5 @@ app.get('/info', (request, response) => {
 const PORT = process.env.PORT || 3001 // Käytettävä portti
 // Sovellus tarkkailee valitun portin liikennettä.
 app.listen(PORT, () => {
-  console.log(`Server running, port: ${PORT}`)
+  console.log(`Server running - Port: ${PORT}`)
 })
