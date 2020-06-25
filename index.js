@@ -24,24 +24,26 @@ let persons = [
 
 const express = require('express')
 const app = express()
+var morgan = require('morgan')
 app.use(express.json())
+app.use(morgan('dev'))
 
 // Kaikki puhelinnumerot
 app.get('/api/persons', (request, response) => {
-  console.log('Requested all persons.')
+  //console.log('Requested all persons.')
   response.json(persons)
 })
 
 // Yksittäinen puhelinnumero
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
-  console.log(`Request on person with id: ${id}`)
+  //console.log(`Request on person with id: ${id}`)
   const person = persons.find(p => p.id === id)
 
   if (person) {
     response.json(person)
   } else {  // Mikäli henkilöä ei löytynyt
-    console.log(`Requested person not found.`)
+    //console.log(`Requested person not found.`)
     response.status(404).end()
   }
 })
@@ -50,13 +52,13 @@ app.get('/api/persons/:id', (request, response) => {
 const generateId = () => {
   const max = 9999
   let newId = 1 + Math.floor(Math.random() * max)
-  console.log(`Generated new id: ${newId}`)
+  //console.log(`Generated new id: ${newId}`)
 
   // Generoidaan kunnes löytyy vapaa id.
   while (persons.find(p => p.id === newId)) {
-    console.log(`Id already present, generating new one...`)
+    //console.log(`Id already present, generating new one...`)
     newId = Math.floor(Math.random() * max)
-    console.log(`Generated new id: ${newId}`)
+    //console.log(`Generated new id: ${newId}`)
   }
 
   return newId
@@ -64,7 +66,7 @@ const generateId = () => {
 
 // Yksittäinen lisäys
 app.post('/api/persons', (request, response) => {
-  console.log(`Request on adding a new person.`)
+  //console.log(`Request on adding a new person.`)
   const reqBody = request.body
 
   if (!reqBody.name || !reqBody.number) {
@@ -85,7 +87,7 @@ app.post('/api/persons', (request, response) => {
     id: generateId()
   }
 
-  console.log(newPerson)
+  //console.log(newPerson)
   persons = persons.concat(newPerson)
   response.json(newPerson)
 })
@@ -93,14 +95,14 @@ app.post('/api/persons', (request, response) => {
 // Yksittäinen poisto
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
-  console.log(`Request on delete person with id: ${id}`)
+  //console.log(`Request on delete person with id: ${id}`)
   persons = persons.filter(p => p.id !== id)
   response.status(204).end()
 })
 
 // Sovelluksen yleistiedot
 app.get('/info', (request, response) => {
-  console.log('Requested info.')
+  //console.log('Requested info.')
   const personCount = persons.length
   const time = new Date()
   response.send(`Phonebook has info of ${personCount} people.<br/><br/>${time}`)
