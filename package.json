@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:front": "rm -rf build && cd ../fullstackopen-2020_iirokiviluoma/osa3/puhelinluettelo_frontend && npm run build && cp -r build ../../../fullstackopen-2020_iirokiviluoma_osa3/",
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:front && git add . && git commit -m deploy:full && git push && npm run deploy",
+    "logs:heroku": "heroku logs --tail"
   },
   "author": "Iiro Kiviluoma",
   "license": "MIT",
