@@ -24,8 +24,10 @@ let persons = [
 
 const express = require('express')
 const app = express()
+const cors = require('cors')
 var morgan = require('morgan')
 
+app.use(cors())
 app.use(express.json())
 // Lisätään token, joka pitää sisällään pyynnön lähettämän datan.
 morgan.token('data', function (req, res) {
@@ -101,6 +103,15 @@ app.post('/api/persons', (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   //console.log(`Request on delete person with id: ${id}`)
+
+  // Poistettavaa henkilöä ei löydy.
+  if (!persons.some(p => p.id === id)) {
+    response.status(400).json({
+      error: "Person not found."
+    })
+  }
+
+  // Onnistunut poisto.
   persons = persons.filter(p => p.id !== id)
   response.status(204).end()
 })
