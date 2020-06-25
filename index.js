@@ -25,8 +25,13 @@ let persons = [
 const express = require('express')
 const app = express()
 var morgan = require('morgan')
+
 app.use(express.json())
-app.use(morgan('dev'))
+// Lisätään token, joka pitää sisällään pyynnön lähettämän datan.
+morgan.token('data', function (req, res) {
+  return JSON.stringify(req.body)
+})
+app.use(morgan(':method :url :status :response-time ms - :res[content-length] :data'))
 
 // Kaikki puhelinnumerot
 app.get('/api/persons', (request, response) => {
