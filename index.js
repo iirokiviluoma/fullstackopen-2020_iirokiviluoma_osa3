@@ -22,24 +22,29 @@ let persons = [
   }
 ]
 
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
 const cors = require('cors')
 var morgan = require('morgan')
 
-app.use(cors())
-app.use(express.json())
-// Lisätään token, joka pitää sisällään pyynnön lähettämän datan.
+// Lisätään morganiin token, joka pitää sisällään pyynnön lähettämän datan.
 morgan.token('data', function (req, res) {
   return JSON.stringify(req.body)
 })
+
+app.use(cors())
+app.use(express.json())
 app.use(morgan(':method :url :status :response-time ms - :res[content-length] :data'))
 app.use(express.static('build'))
 
 // Kaikki puhelinnumerot
 app.get('/api/persons', (request, response) => {
-  //console.log('Requested all persons.')
-  response.json(persons)
+  // Haetaan kaikki puhelinnumerot tietokannasta.
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 // Yksittäinen puhelinnumero
@@ -125,7 +130,7 @@ app.get('/info', (request, response) => {
   response.send(`Phonebook has info of ${personCount} people.<br/><br/>${time}`)
 })
 
-const PORT = process.env.PORT || 3001 // Käytettävä portti
+const PORT = process.env.PORT  // Käytettävä portti
 // Sovellus tarkkailee valitun portin liikennettä.
 app.listen(PORT, () => {
   console.log(`Server running - Port: ${PORT}`)
