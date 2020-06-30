@@ -72,6 +72,23 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+// Yksittäisen tiedon muokkaus
+app.put('/api/persons/:id', (request, response, next) => {
+  const reqBody = request.body
+  console.log(reqBody)
+
+  const person = {
+    name: reqBody.name,
+    number: reqBody.number
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, {new: true})
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
+
 // Sovelluksen yleistiedot
 app.get('/info', (request, response) => {
   //console.log('Requested info.')
