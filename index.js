@@ -1,6 +1,6 @@
-require('dotenv').config()
 const express = require('express')
 const app = express()
+require('dotenv').config()
 const Person = require('./models/person')
 const cors = require('cors')
 var morgan = require('morgan')
@@ -24,7 +24,7 @@ app.get('/api/persons', (request, response) => {
 })
 
 // Yksittäinen puhelinnumero, EI KÄYTÖSSÄ FRONTENDIN TOIMESTA!
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   // Haetaan yksittäinen henkilö tietokannasta id:n avulla.
   Person.findById(request.params.id)
     .then(person => {
@@ -35,12 +35,7 @@ app.get('/api/persons/:id', (request, response) => {
         response.status(404).end()
       }
     })
-    .catch(error => {
-      //console.log(error)
-      response.status(400).json({
-        error: 'Malformatted Id.'
-      })
-    })
+    .catch(error => next(error))
 })
 
 // Yksittäinen lisäys
@@ -64,16 +59,17 @@ app.post('/api/persons', (request, response) => {
 })
 
 // Yksittäinen poisto
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
     .then(result => {
-      response.status(204).end()
+      if (result) {
+        response.status(204).end()
+      }
+      else {  // Jos poistettavaa ei löydy, mutta id oikeaa muotoa.
+        response.status(404).end()
+      }
     })
-    .catch(error => {
-      response.status(400).json({
-        error: 'Bad request.'
-      })
-    })
+    .catch(error => next(error))
 })
 
 // Sovelluksen yleistiedot
@@ -83,6 +79,29 @@ app.get('/info', (request, response) => {
   const time = new Date()
   response.send(`Phonebook has info of ${personCount} people.<br/><br/>${time}`)
 })
+
+// Olemattomine osoitteiden käsittely, esim. /api/xd...
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({
+    error: 'Unknown endpoint.'
+  })
+}
+
+app.use(unknownEndpoint)
+
+// Virheidenkäsittelijä
+const errorHandler = (error, request, response, next) => {
+  console.error(`Error: ${error.message}`)
+
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return response.status(400).send({
+      error: 'Malformatted id.'
+    })
+  }
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT  // Käytettävä portti
 // Sovellus tarkkailee valitun portin liikennettä.
