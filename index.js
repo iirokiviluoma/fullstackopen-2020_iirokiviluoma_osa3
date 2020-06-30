@@ -42,12 +42,6 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const reqBody = request.body
 
-  if (!reqBody.name || !reqBody.number) {
-    return response.status(400).json({
-      error: "Bad request: content missing."
-    })
-  }
-
   const newPerson = new Person ({
     name: reqBody.name,
     number: reqBody.number
@@ -111,7 +105,7 @@ app.use(unknownEndpoint)
 
 // Virheidenkäsittelijä
 const errorHandler = (error, request, response, next) => {
-  console.error(`Error: ${error.message}`)
+  //console.error(`Error: ${error.message}`)
 
   if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return response.status(400).send({
