@@ -78,7 +78,8 @@ app.put('/api/persons/:id', (request, response, next) => {
     number: reqBody.number
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, {new: true})
+  // Myös validointi suoritettava -> runValidators: true
+  Person.findByIdAndUpdate(request.params.id, person, {new: true, runValidators: true})
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -117,6 +118,7 @@ const errorHandler = (error, request, response, next) => {
       error: error.message
     })
   }
+  else (console.log('Mitä ihmettä??'))
   next(error)
 }
 
