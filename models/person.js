@@ -1,10 +1,12 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 mongoose.set('useFindAndModify', false)
 
 const url = process.env.MONGODB_URL
 
 console.log(`Connecting to MongoDB: ${url}`)
-mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(url,
+  {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
   .then(result => {
     console.log(`Connected to MongoDB.`)
   })
@@ -13,9 +15,11 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
   })
 
   const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+    name: {type: String, required: true, unique: true},
+    number: {type: String, required: true}
   })
+
+  personSchema.plugin(uniqueValidator)
 
   // Muutetaan Mongoose-oliot haluttuun muotoon.
   personSchema.set('toJSON', {

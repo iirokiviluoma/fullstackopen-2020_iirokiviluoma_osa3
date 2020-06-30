@@ -39,7 +39,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 // Yksittäinen lisäys
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const reqBody = request.body
 
   if (!reqBody.name || !reqBody.number) {
@@ -53,9 +53,11 @@ app.post('/api/persons', (request, response) => {
     number: reqBody.number
   })
 
-  newPerson.save().then(savedPerson => {
-    response.json(savedPerson)
-  })
+  newPerson.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+    .catch(error => next(error))
 })
 
 // Yksittäinen poisto
@@ -114,6 +116,11 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return response.status(400).send({
       error: 'Malformatted id.'
+    })
+  }
+  else if (error.name === 'ValidationError') {
+    return response.status(400).json({
+      error: error.message
     })
   }
   next(error)
