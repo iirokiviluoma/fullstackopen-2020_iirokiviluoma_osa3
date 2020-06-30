@@ -28,11 +28,18 @@ app.get('/api/persons/:id', (request, response) => {
   // Haetaan yksittäinen henkilö tietokannasta id:n avulla.
   Person.findById(request.params.id)
     .then(person => {
-      response.json(person)
+      if (person) {
+        response.json(person)
+      }
+      else {
+        response.status(404).end()
+      }
     })
     .catch(error => {
-      console.log(error)
-      response.status(404).end()
+      //console.log(error)
+      response.status(400).json({
+        error: 'Malformatted Id.'
+      })
     })
 })
 
@@ -58,17 +65,15 @@ app.post('/api/persons', (request, response) => {
 
 // Yksittäinen poisto
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  //console.log(`Request on delete person with id: ${id}`)
-
-  // Poistettavaa henkilöä ei löydy.
-  if (!persons.some(p => p.id === id)) {
-    response.status(404).end()
-  }
-
-  // Onnistunut poisto.
-  persons = persons.filter(p => p.id !== id)
-  response.status(204).end()
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => {
+      response.status(400).json({
+        error: 'Bad request.'
+      })
+    })
 })
 
 // Sovelluksen yleistiedot
