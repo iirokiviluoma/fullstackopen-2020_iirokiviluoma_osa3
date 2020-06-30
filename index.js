@@ -6,9 +6,7 @@ const cors = require('cors')
 var morgan = require('morgan')
 
 // Lisätään morganiin token, joka pitää sisällään pyynnön lähettämän datan.
-morgan.token('data', function (req, res) {
-  return JSON.stringify(req.body)
-})
+morgan.token('data', req => JSON.stringify(req.body))
 
 app.use(cors())
 app.use(express.json())
@@ -79,7 +77,8 @@ app.put('/api/persons/:id', (request, response, next) => {
   }
 
   // Myös validointi suoritettava -> runValidators: true
-  Person.findByIdAndUpdate(request.params.id, person, {new: true, runValidators: true})
+  Person.findByIdAndUpdate(request.params.id, person,
+    { new: true, runValidators: true })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
