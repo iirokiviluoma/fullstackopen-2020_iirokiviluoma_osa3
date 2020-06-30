@@ -91,10 +91,11 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 // Sovelluksen yleistiedot
 app.get('/info', (request, response) => {
-  //console.log('Requested info.')
-  const personCount = persons.length
-  const time = new Date()
-  response.send(`Phonebook has info of ${personCount} people.<br/><br/>${time}`)
+  Person.find({}).then(persons => {
+    const personCount = persons.length
+    const time = new Date()
+    response.send(`Phonebook has info of ${personCount} people.<br/><br/>${time}`)
+  })
 })
 
 // Olemattomine osoitteiden käsittely, esim. /api/xd...
